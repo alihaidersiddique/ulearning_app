@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ulearning_app/app_blocs.dart';
 import 'package:ulearning_app/app_events.dart';
 import 'package:ulearning_app/app_states.dart';
+import 'package:ulearning_app/pages/welcome/bloc/welcome_blocs.dart';
+import 'package:ulearning_app/pages/welcome/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,13 +16,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppBlocs(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Counter',
-        theme: ThemeData(useMaterial3: true),
-        home: const MyHomePage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => WelcomeBloc()),
+        BlocProvider(create: (context) => AppBlocs()),
+      ],
+      child: ScreenUtilInit(
+        builder: (context, child) => const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Welcome(),
+        ),
       ),
     );
   }
@@ -50,12 +56,14 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             FloatingActionButton(
+              heroTag: "heroTag1",
               onPressed: () =>
                   BlocProvider.of<AppBlocs>(context).add(Increment()),
               tooltip: 'Increment',
               child: const Icon(Icons.add),
             ),
             FloatingActionButton(
+              heroTag: "heroTag2",
               onPressed: () =>
                   BlocProvider.of<AppBlocs>(context).add(Decrement()),
               tooltip: 'Decrement',
